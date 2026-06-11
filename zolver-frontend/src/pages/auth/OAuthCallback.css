@@ -1,0 +1,47 @@
+.oauth-page {
+  min-height: 100vh;
+  margin-top: calc(-1 * var(--header-height));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-page);
+}
+
+.oauth-card {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.oauth-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--zol-beige-300);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: oauth-spin 0.8s linear infinite;
+}
+
+@keyframes oauth-spin {
+  to { transform: rotate(360deg); }
+}
+
+.oauth-loading-text {
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+}
+
+.oauth-error-icon { font-size: 3rem; }
+
+.oauth-error-title {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+}
+
+.oauth-error-desc {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}

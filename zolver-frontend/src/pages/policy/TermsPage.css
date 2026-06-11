@@ -1,0 +1,13 @@
+.terms-container { background-color: #F8F8F7; padding: 50px 20px; font-family: 'Pretendard', sans-serif; }
+.terms-card { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px 60px; border: 1px solid #E2E2E0; }
+.terms-header h1 { font-size: 28px; font-weight: 800; margin-bottom: 10px; }
+.terms-header p { font-size: 15px; color: #666; margin-bottom: 30px; }
+
+.terms-index { background: #F9F9F8; padding: 20px; margin-bottom: 40px; border: 1px solid #EEE; }
+.terms-index li { font-size: 14px; margin-bottom: 6px; color: #52a46e; cursor: pointer; }
+
+.terms-content h3 { font-size: 17px; font-weight: 700; margin: 35px 0 12px; padding-bottom: 5px; border-bottom: 1px solid #333; }
+.terms-content p { font-size: 14.5px; color: #444; margin-bottom: 15px; line-height: 1.8; }
+
+.warning-section { background-color: #FAF8F2; padding: 20px; border: 1px solid #E6E0D0; margin-top: 20px; }
+.warning-section strong { color: #D93025; text-decoration: underline; }

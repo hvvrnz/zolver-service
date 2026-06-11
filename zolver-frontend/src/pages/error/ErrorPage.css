@@ -1,0 +1,133 @@
+/* src/pages/error/ErrorPage.css */
+
+.error-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 70px);
+  padding: 60px 20px;
+  background: #f8f7f2;
+}
+
+.error-content {
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.error-image-wrapper {
+  margin-bottom: 24px;               /* ✅ 48px → 24px (절반!) */
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.error-image {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.08));
+}
+
+.error-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2e2b26;
+  margin: 0 0 12px 0;                /* ✅ 20px → 12px */
+  letter-spacing: -0.8px;
+  line-height: 1.3;
+}
+
+.error-description {
+  font-size: 16px;
+  color: #6b6358;
+  margin: 0 0 32px 0;                /* ✅ 48px → 32px */
+  line-height: 1.7;
+  letter-spacing: -0.3px;
+}
+
+.error-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.error-btn {
+  padding: 13px 28px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(74, 69, 62, 0.08);
+  letter-spacing: -0.3px;
+}
+
+.error-btn-primary {
+  background: #6c8450;
+  color: white;
+}
+
+.error-btn-primary:hover {
+  background: #556641;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(108, 132, 80, 0.20);
+}
+
+.error-btn-secondary {
+  background: white;
+  color: #6c8450;
+  border: 2px solid #6c8450;
+}
+
+.error-btn-secondary:hover {
+  background: #f4f7ef;
+  transform: translateY(-2px);
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .error-page-container {
+    padding: 40px 20px;
+    min-height: calc(100vh - 70px);
+  }
+  
+  .error-image-wrapper {
+    margin-bottom: 20px;             /* ✅ 모바일도 축소 */
+  }
+  
+  .error-title {
+    font-size: 22px;
+    margin-bottom: 10px;             /* ✅ 모바일도 축소 */
+    letter-spacing: -0.5px;
+  }
+  
+  .error-description {
+    font-size: 14px;
+    margin-bottom: 28px;             /* ✅ 모바일도 축소 */
+    letter-spacing: -0.2px;
+  }
+  
+  .error-image {
+    max-width: 260px;
+  }
+  
+  .error-actions {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .error-btn {
+    width: 100%;
+    max-width: 260px;
+    padding: 12px 24px;
+  }
+}

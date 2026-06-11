@@ -1,0 +1,77 @@
+# Airflow 로컬 개발용 docker-compose.yml
+# 위치: ~/Zolver/zolver-airflow/docker-compose.yml
+# 실행: docker compose up --build
+
+x-airflow-common: &airflow-common
+  build: .
+  environment:
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${AIRFLOW_DB_USER}:${AIRFLOW_DB_PASSWORD}@airflow-db:5432/${AIRFLOW_DB_NAME}
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY}
+    # 서비스 DB 연결 (로컬: zolver-db, 서버: SSH 터널)
+    ZOLVER_DB_HOST: ${DB_HOST:-host.docker.internal}
+    ZOLVER_DB_PORT: ${DB_PORT:-5432}
+    ZOLVER_DB_NAME: ${DB_NAME}
+    ZOLVER_DB_USER: ${DB_USER}
+    ZOLVER_DB_PASSWORD: ${DB_PASSWORD}
+    # 덤프용 서버 접속 정보
+    SERVER_HOST: ${SERVER_HOST:-}
+    SERVER_USER: ${SERVER_USER:-ubuntu}
+    SERVER_KEY_PATH: ${SERVER_KEY_PATH:-/root/.ssh/zolver-key.pem}
+    SERVER_DB_NAME: ${SERVER_DB_NAME:-zolver_db}
+    SERVER_DB_USER: ${SERVER_DB_USER:-zolver}
+    SERVER_DB_PASSWORD: ${SERVER_DB_PASSWORD:-}
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./script:/opt/airflow/script
+    - ./logs:/opt/airflow/logs
+    - ./backups:/opt/airflow/backups
+    - airflow_plugins:/opt/airflow/plugins
+    - ~/.ssh:/home/airflow/.ssh:ro          # dump DAG에서 ssh 명령어 실행용
+  depends_on:
+    airflow-db:
+      condition: service_healthy
+  extra_hosts:
+    - "host.docker.internal:host-gateway"
+
+services:
+  airflow-db:
+    image: postgres:15
+    container_name: airflow-db
+    environment:
+      POSTGRES_USER: ${AIRFLOW_DB_USER}
+      POSTGRES_PASSWORD: ${AIRFLOW_DB_PASSWORD}
+      POSTGRES_DB: ${AIRFLOW_DB_NAME}
+    ports:
+      - "5433:5432"
+    volumes:
+      - airflow_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${AIRFLOW_DB_USER}"]
+      interval: 5s
+      retries: 5
+
+  airflow-init:
+    <<: *airflow-common
+    container_name: airflow-init
+    command: bash -c "airflow db migrate && airflow users create --username ${AIRFLOW_USER} --password ${AIRFLOW_PASSWORD} --firstname admin --lastname admin --role Admin --email ${AIRFLOW_EMAIL}"
+    restart: on-failure
+
+  airflow-webserver:
+    <<: *airflow-common
+    container_name: airflow-webserver
+    ports:
+      - "8080:8080"
+    command: webserver
+    restart: always
+
+  airflow-scheduler:
+    <<: *airflow-common
+    container_name: airflow-scheduler
+    command: scheduler
+    restart: always
+
+volumes:
+  airflow_db_data:
+  airflow_plugins:

@@ -1,0 +1,27 @@
+fastapi
+uvicorn
+
+
+httpx==0.27.0 # 비동기 HTTP 요청 library
+python-jose[cryptography]==3.3.0 # JWT 토큰 생성/검증
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
+pydantic-settings==2.3.4 # .env를 자동으로 읽고 타입 검증
+asyncpg==0.29.0 # SQLAlchemy가 PostgreSQL에 비동기로 접속할 때 드라이버
+psycopg2-binary==2.9.6 # SQLAlchemy가 PostgreSQL에 동기로 접속할 때 드라이버
+
+doo
+et_xmlfile==2.0.0
+greenlet==3.3.2
+numpy==2.4.3
+openpyxl==3.1.5
+pandas==3.0.1
+pandas-stubs==3.0.0.260204
+python-dateutil==2.9.0.post0
+python-dotenv==1.2.2
+pytz==2026.1.post1
+six==1.17.0
+SQLAlchemy==2.0.48
+typing_extensions==4.15.0
+python-multipart
+aiofiles==24.1.0

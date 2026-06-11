@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:15
+    container_name: zolver-db
+    restart: always
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - ./zolver-backend/models/database:/docker-entrypoint-initdb.d
+      - zolver_db_data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: ./zolver-backend/Dockerfile
+    container_name: zolver-api
+    env_file: .env
+    environment:
+      - DB_HOST=db
+      - PYTHONPATH=/app/zolver-data
+    ports:
+      - "8000:8000"
+    command: uvicorn app:app --host 0.0.0.0 --port 8000
+    working_dir: /app/zolver-backend
+    depends_on:
+      - db
+    restart: always
+    volumes:
+      - ./zolver-data/logs:/app/zolver-data/logs
+
+  worker:
+    build:
+      context: .
+      dockerfile: ./zolver-data/Dockerfile
+    container_name: zolver-worker
+    env_file: .env
+    environment:
+      - DB_HOST=db
+      - PYTHONPATH=/app
+    working_dir: /app/zolver-data
+    command: tail -f /dev/null
+    depends_on:
+      - db
+    restart: always
+
+volumes:
+  zolver_db_data:

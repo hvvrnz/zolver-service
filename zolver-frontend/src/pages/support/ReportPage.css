@@ -1,0 +1,231 @@
+/* src/pages/support/ReportPage.css */
+
+.report-page {
+  min-height: 100vh;
+  background: var(--color-bg-page);
+  padding: var(--space-8) var(--space-6);
+}
+
+.report-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.report-header {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.report-title {
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-extrabold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+  letter-spacing: -0.5px;
+}
+
+.report-subtitle {
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+  line-height: var(--leading-loose);
+}
+
+.report-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.report-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+}
+
+.report-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* 사용자 등록 카드 스타일 */
+.registration-card {
+  /* border-left: 4px solid #1976d2; */
+  background: linear-gradient(to bottom, white 0%, #f0f7ff 100%);
+}
+
+/* ✅ 카드 제목 (아이콘 + 텍스트) */
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+
+.registration-card .card-title {
+  color: #2e2b26;
+}
+
+/* 카드 설명 */
+.card-description {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-6);
+}
+
+.report-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+  list-style: none;
+  padding: 0;
+  margin-bottom: var(--space-6);
+}
+
+.report-list li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  background: var(--zol-beige-50);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-primary);
+  transition: all 0.2s ease;
+}
+
+.report-list li:hover {
+  background: var(--zol-beige-100);
+  transform: translateX(4px);
+}
+
+.report-list strong {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+}
+
+.report-list span {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: var(--leading-relaxed);
+}
+
+/* 버튼 스타일 */
+.btn-report-form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-4);
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  font-family: var(--font-sans);
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-report-form:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-report-form:active {
+  transform: translateY(0);
+}
+
+/* 사용자 등록 버튼 */
+.registration-btn {
+  background: #968e7c;
+  color: white;
+}
+
+.registration-btn:hover {
+  background: #6b6358;
+}
+
+/* 오류 제보 버튼 */
+.report-btn {
+  background: var(--color-primary);
+  color: white;
+}
+
+.report-btn:hover {
+  background: #5a6d42;
+}
+
+/* 안내사항 */
+.report-notice {
+  background: var(--zol-beige-100);
+  border: 1px solid var(--zol-beige-300);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+}
+
+.report-notice h3 {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+
+.report-notice ul {
+  list-style: disc;
+  padding-left: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.report-notice li {
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-body);
+}
+
+.report-notice strong {
+  color: var(--color-text-primary);
+  font-weight: var(--weight-semibold);
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .report-page {
+    padding: var(--space-4);
+  }
+  
+  .report-title {
+    font-size: var(--text-2xl);
+  }
+  
+  .report-subtitle {
+    font-size: var(--text-sm);
+  }
+  
+  .report-card {
+    padding: var(--space-5);
+  }
+  
+  .report-content {
+    gap: var(--space-6);
+  }
+  
+  .card-title {
+    font-size: var(--text-lg);
+  }
+}
+
+@media (max-width: 600px) {
+  .report-list {
+    grid-template-columns: 1fr;
+  }
+}

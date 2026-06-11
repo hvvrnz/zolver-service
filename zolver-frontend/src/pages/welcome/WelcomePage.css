@@ -1,0 +1,234 @@
+/* src/pages/welcome/WelcomePage.css */
+
+.welcome-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f7f2 0%, #e8e6dc 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+}
+
+.welcome-container {
+  width: 100%;
+  max-width: 900px;
+}
+
+/* 헤더 */
+.welcome-header {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.welcome-logo {
+  width: 72px;
+  height: 72px;
+  background: linear-gradient(135deg, var(--zol-green-50), var(--zol-green-100));
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-4);
+  color: var(--color-primary);
+  box-shadow: 0 4px 16px rgba(108, 132, 80, 0.12);
+}
+
+.welcome-title {
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-extrabold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+  letter-spacing: -0.5px;
+}
+
+.welcome-subtitle {
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+  line-height: var(--leading-relaxed);
+}
+
+/* 카드 그리드 */
+.welcome-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+/* ✅ 카드 기본 - cursor 제거! */
+.welcome-card {
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--color-primary);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+/* Primary 카드 */
+.welcome-card.primary {
+  border-color: var(--color-primary);
+  background: linear-gradient(to bottom, white 0%, var(--zol-green-50) 100%);
+}
+
+/* 추천 배지 */
+.welcome-card-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--color-primary);
+  color: white;
+  font-size: 11px;
+  font-weight: var(--weight-bold);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  box-shadow: 0 2px 6px rgba(108, 132, 80, 0.25);
+}
+
+/* 아이콘 */
+.welcome-card-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--zol-green-100);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-4);
+  color: var(--color-primary);
+  transition: all 0.3s ease;
+}
+
+.welcome-card-icon.secondary {
+  background: var(--zol-beige-200);
+  color: #8b7355;
+}
+
+.welcome-card-icon.tertiary {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+/* 텍스트 */
+.welcome-card-title {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.welcome-card-desc {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-5);
+  min-height: 44px;
+}
+
+/* 버튼 */
+.welcome-card-btn {
+  width: 100%;
+  padding: var(--space-3);
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.welcome-card-btn.secondary {
+  background: var(--zol-beige-400);
+  color: var(--color-text-primary);
+}
+
+.welcome-card-btn.tertiary {
+  background: #1976d2;
+  color: white;
+}
+
+/* ✅ 버튼 호버 (카드 호버는 제거!) */
+.welcome-card-btn:hover {
+  background: #5a6d42;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(108, 132, 80, 0.3);
+}
+
+.welcome-card-btn.secondary:hover {
+  background: var(--zol-beige-500);
+  box-shadow: 0 4px 12px rgba(139, 115, 85, 0.3);
+}
+
+.welcome-card-btn.tertiary:hover {
+  background: #1565c0;
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+}
+
+/* 푸터 */
+.welcome-footer {
+  text-align: center;
+  padding: var(--space-3);
+  background: var(--zol-green-50);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--zol-green-100);
+}
+
+.welcome-footer p {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-primary);
+  font-weight: var(--weight-semibold);
+}
+
+/* 반응형 */
+@media (max-width: 1024px) {
+  .welcome-cards {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+    margin: 0 auto var(--space-6);
+  }
+}
+
+@media (max-width: 768px) {
+  .welcome-page {
+    padding: var(--space-4);
+  }
+
+  .welcome-title {
+    font-size: var(--text-2xl);
+  }
+  
+  .welcome-subtitle {
+    font-size: var(--text-sm);
+  }
+  
+  .welcome-logo {
+    width: 64px;
+    height: 64px;
+  }
+  
+  .welcome-card {
+    padding: var(--space-5);
+  }
+  
+  .welcome-card-icon {
+    width: 56px;
+    height: 56px;
+  }
+}

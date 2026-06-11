@@ -1,0 +1,19 @@
+# 가상환경 및 라이브러리
+**/venv/
+**/.venv/
+**/node_modules/
+
+# 파이썬 캐시 파일
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE 설정 및 기타 (도커 빌드에 불필요)
+.idea/
+.vscode/
+.git/
+
+# 로그 및 임시 파일
+*.log
+**/logs/

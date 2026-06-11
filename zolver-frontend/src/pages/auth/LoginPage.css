@@ -1,0 +1,148 @@
+.login-page {
+  min-height: calc(100vh);
+  margin-top: calc(-1 * var(--header-height));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-5);
+  padding: var(--space-6) var(--space-4);
+  background:
+    radial-gradient(ellipse at 30% 50%, #e8eed8 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, #f0e8d8 0%, transparent 50%),
+    #f8f7f2;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-2xl);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  padding: var(--space-10) var(--space-10) var(--space-8);
+  box-shadow:
+    0 20px 60px rgba(108, 132, 80, 0.12),
+    0 4px 16px rgba(74, 69, 62, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.login-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: var(--space-1);
+}
+
+.login-logo-img {
+  width: 220px;
+  height: auto;
+}
+
+.login-guide-title {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-extrabold);
+  color: var(--color-text-primary);
+  letter-spacing: -0.5px;
+  margin-bottom: var(--space-1);
+  text-align: center;
+}
+
+.login-guide-desc {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: var(--leading-loose);
+  text-align: center;
+}
+
+.login-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--zol-beige-300),
+    transparent
+  );
+}
+
+.kakao-login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  height: 50px;
+  background: #FEE500;
+  color: #191919;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: 0 2px 8px rgba(254, 229, 0, 0.4);
+}
+.kakao-login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+.kakao-login-btn:not(:disabled):hover {
+  background: #F2D800;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(254, 229, 0, 0.5);
+}
+.kakao-login-btn:active { transform: translateY(0); }
+
+.kakao-logo { width: 20px; height: 20px; flex-shrink: 0; }
+
+.kakao-loading {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(25, 25, 25, 0.3);
+  border-top-color: #191919;
+  border-radius: 50%;
+  animation: kakao-spin 0.7s linear infinite;
+}
+
+@keyframes kakao-spin {
+  to { transform: rotate(360deg); }
+}
+
+.login-notice {
+  font-size: 11px;
+  color: var(--color-text-disabled);
+  text-align: center;
+  line-height: 1.8;
+}
+
+.login-text-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  font-family: inherit;
+  color: var(--zol-beige-600);
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color var(--transition-base);
+}
+.login-text-link:hover { color: var(--color-primary); }
+
+.login-tagline {
+  font-size: var(--text-xs);
+  color: var(--color-text-disabled);
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 480px) {
+  .login-card { padding: var(--space-8) var(--space-6); }
+  .login-logo-img { width: 160px; }
+}

@@ -1,0 +1,252 @@
+/* --------------------------- */
+/* Header 기본 구조       */
+/* --------------------------- */
+
+.header {
+    height: 70px;
+    padding: 0 150px;
+    background-color: #faf9f4;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 2px solid #eeeae1;
+    display: flex;
+    align-items: center;
+}
+
+.header-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 로고 스타일 (크기 복구) */
+.header-logo {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.header-logo img {
+    height: 70px; /* 데스크탑 기존 크기 유지 */
+    width: auto;
+    transition: transform 0.15s ease;
+}
+
+/* 메뉴 영역 */
+.header-menu {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.menu-label {
+    font-size: 16px;
+    cursor: pointer;
+    font-family: "Pretendard", sans-serif;
+    padding: 10px 4px;
+    color: #4a453d;
+    transition: 0.2s;
+    white-space: nowrap;
+}
+
+.menu-label:hover {
+    color: #6c8450;
+}
+
+.menu-label.active {
+    color: #3a5520;
+    font-weight: 800;
+    position: relative;
+}
+
+.menu-label.active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #6c8450;
+    border-radius: 3px;
+}
+
+/* 드롭다운 */
+.dropdown-wrapper {
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 45px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    border-radius: 12px;
+    width: 180px;
+    padding: 10px 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+}
+
+.dropdown-wrapper:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu div {
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #4a453d;
+    transition: 0.2s;
+}
+
+.dropdown-menu div:hover, .submenu-active {
+    background: #f5f2ea;
+    color: #3a5520;
+    font-weight: 700;
+}
+
+/* 아이콘 그룹 */
+.icon-group {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.icon-wrapper {
+    position: relative;
+    cursor: pointer;
+    color: #8d897f;
+    transition: 0.2s;
+}
+
+.icon-wrapper:hover, .active-icon {
+    color: #4b642c;
+}
+
+.icon-wrapper .tooltip {
+    display: none;
+    position: absolute;
+    top: 35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.icon-wrapper:hover .tooltip {
+    display: block;
+}
+
+/* --------------------------- */
+/* 반응형 (Mobile)       */
+/* --------------------------- */
+
+.mobile-toggle {
+    display: none;
+}
+
+@media (max-width: 1200px) {
+    .header { padding: 0 40px; }
+}
+
+/* 모바일 오버레이 */
+.mobile-overlay {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobile-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+        z-index: 999;
+    }
+
+    .header { padding: 0 20px; }
+
+    .header-logo img {
+        height: 50px;
+    }
+
+    .mobile-toggle {
+        display: block;
+        cursor: pointer;
+        color: #4a453d;
+    }
+
+    /* 패널 내 닫기 버튼 */
+    .mobile-menu-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #4a453d;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        transition: 0.2s;
+    }
+
+    .mobile-menu-close:hover {
+        background: #eeeae1;
+        color: #3a5520;
+    }
+
+    .header-menu {
+        z-index: 1000;
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 280px;
+        height: 100vh;
+        background: #faf9f4;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 70px 30px 30px;
+        gap: 20px;
+        transition: 0.3s ease-in-out;
+        box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+        overflow-y: auto;
+    }
+
+    .header-menu.mobile-open {
+        right: 0;
+    }
+
+    .dropdown-wrapper {
+        width: 100%;
+    }
+
+    .dropdown-menu {
+        position: static;
+        display: block; /* 모바일은 리스트 펼침 */
+        transform: none;
+        box-shadow: none;
+        background: transparent;
+        width: 100%;
+        padding: 5px 0 10px 15px;
+    }
+
+    .icon-group {
+        width: 100%;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #eeeae1;
+        justify-content: space-around;
+    }
+}

@@ -1,0 +1,357 @@
+.gpa-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6) var(--space-16);
+}
+
+.gpa-header { display: flex; flex-direction: column; gap: var(--space-1); margin-bottom: var(--space-5); }
+.gpa-title  { font-size: var(--text-2xl); font-weight: var(--weight-extrabold); color: var(--color-text-primary); letter-spacing: -0.5px; }
+.gpa-subtitle { font-size: var(--text-sm); color: var(--color-text-muted); }
+
+.gpa-loading, .gpa-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: var(--space-3); padding: var(--space-20); color: var(--color-text-disabled); text-align: center;
+}
+.gpa-empty-sub { font-size: var(--text-sm); color: var(--color-text-disabled); }
+
+/* ── 카드 3열 균등 */
+.gpa-summary-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.gpa-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5) var(--space-5);
+  display: flex; flex-direction: column; gap: var(--space-2);
+  box-shadow: var(--shadow-xs);
+}
+.gpa-card.main {
+  background: var(--zol-green-600);
+  border-color: transparent;
+  box-shadow: var(--shadow-green);
+}
+
+.gpa-card-label {
+  font-size: var(--text-xs); color: var(--color-text-disabled);
+  display: flex; align-items: center; gap: var(--space-1);
+}
+.gpa-card-label-sub { color: var(--color-text-muted); }
+.gpa-card.main .gpa-card-label { color: rgba(255,255,255,0.6); }
+
+.gpa-card-value-row { display: flex; align-items: baseline; gap: var(--space-2); }
+.gpa-card-value {
+  font-size: var(--text-3xl); font-weight: var(--weight-extrabold);
+  color: var(--color-text-primary); line-height: 1; letter-spacing: -1px;
+}
+.gpa-card.main .gpa-card-value { color: #fff; }
+.gpa-card-max { font-size: var(--text-sm); color: var(--color-text-muted); }
+.gpa-card.main .gpa-card-max { color: rgba(255,255,255,0.5); }
+
+/* ── 게이지 */
+.gpa-gauge { margin-top: var(--space-1); }
+.gpa-gauge-bar-wrap {
+  position: relative; height: 5px;
+  background: var(--zol-beige-200); border-radius: var(--radius-full); overflow: visible;
+}
+.gpa-card.main .gpa-gauge-bar-wrap { background: rgba(255,255,255,0.2); }
+.gpa-gauge-bar {
+  height: 100%; background: var(--color-primary);
+  border-radius: var(--radius-full); transition: width var(--duration-slow) var(--ease-out);
+}
+.gpa-gauge-bar.inverse { background: rgba(255,255,255,0.85); }
+.gpa-gauge-target-line {
+  position: absolute; top: -4px; width: 2px; height: 13px;
+  background: var(--zol-warning); border-radius: 1px; transform: translateX(-50%);
+}
+.gpa-card.main .gpa-gauge-target-line { background: #fde68a; }
+.gpa-gauge-meta {
+  font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 2px;
+}
+.gpa-gauge-meta-dark { color: var(--color-text-disabled); }
+
+/* ── 인사이트 */
+.gpa-insight-row {
+  display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap;
+  padding: var(--space-4) var(--space-6);
+  background: var(--color-bg-card); border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl); margin-bottom: var(--space-4); box-shadow: var(--shadow-xs);
+}
+.gpa-insight-item { display: flex; align-items: baseline; gap: var(--space-2); padding: var(--space-1) var(--space-3); }
+.gpa-insight-num { font-size: var(--text-xl); font-weight: var(--weight-extrabold); color: var(--color-text-primary); line-height: 1; }
+.gpa-insight-num.accent { color: var(--color-primary); }
+.gpa-insight-num.muted  { color: var(--color-text-muted); }
+.gpa-insight-label { font-size: var(--text-xs); color: var(--color-text-disabled); white-space: nowrap; }
+.gpa-insight-divider { width: 1px; height: 28px; background: var(--color-border); flex-shrink: 0; }
+
+/* ── 섹션 공통 */
+.gpa-section {
+  background: var(--color-bg-card); border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl); padding: var(--space-6);
+  box-shadow: var(--shadow-xs); margin-bottom: var(--space-4);
+}
+.gpa-section-title {
+  font-size: var(--text-xs); font-weight: var(--weight-extrabold);
+  color: var(--color-primary); letter-spacing: 1.5px; text-transform: uppercase;
+  opacity: 0.8; margin-bottom: var(--space-1);
+}
+.gpa-section-desc { font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-4); line-height: var(--leading-normal); }
+
+/* ── 막대 그래프 */
+.gpa-chart-wrap { overflow-x: auto; padding-bottom: var(--space-2); }
+.gpa-chart {
+  display: flex; align-items: flex-end; justify-content: center;
+  gap: var(--space-3); height: 180px; min-width: fit-content;
+  border-bottom: 1.5px solid var(--color-border); width: 100%;
+}
+.gpa-bar-item { display: flex; flex-direction: column; align-items: center; min-width: 52px; height: 100%; justify-content: flex-end; }
+.gpa-bar-wrap { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 100%; flex: 1; gap: var(--space-1); }
+.gpa-bar-val { font-size: var(--text-xs); font-weight: var(--weight-semibold); color: var(--color-text-primary); }
+.gpa-bar {
+  width: 36px; background: var(--zol-beige-300);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0; min-height: 4px;
+  transition: height var(--duration-slow) var(--ease-out);
+}
+.gpa-bar.best { background: var(--color-primary); }
+.gpa-bar-label { font-size: 10px; color: var(--color-text-muted); text-align: center; line-height: 1.4; margin-top: var(--space-2); white-space: pre-line; }
+
+/* ── 목표 설정 */
+.gpa-target-list { display: flex; flex-direction: column; margin-bottom: var(--space-5); }
+.gpa-target-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--space-4) 0; border-bottom: 1px solid var(--color-border); gap: var(--space-4);
+}
+.gpa-target-item:last-child { border-bottom: none; }
+.gpa-target-info { display: flex; flex-direction: column; gap: 2px; }
+.gpa-target-label { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--color-text-body); }
+.gpa-target-desc  { font-size: var(--text-xs); color: var(--color-text-muted); }
+.gpa-target-val-row { display: flex; align-items: center; gap: var(--space-3); }
+.gpa-target-val { font-size: var(--text-base); font-weight: var(--weight-bold); color: var(--color-text-primary); }
+.gpa-target-val.unset { color: var(--color-text-disabled); font-weight: var(--weight-regular); }
+.gpa-target-edit-row { display: flex; align-items: center; gap: var(--space-2); }
+
+.gpa-btn-edit {
+  font-size: var(--text-xs); color: var(--color-primary);
+  background: var(--zol-green-50); border: 1px solid var(--zol-green-100);
+  border-radius: var(--radius-md); padding: var(--space-1) var(--space-3);
+  font-family: var(--font-sans); cursor: pointer; transition: all var(--transition-base);
+}
+.gpa-btn-edit:hover { background: var(--zol-green-100); }
+.gpa-btn-save {
+  font-size: var(--text-xs); color: #fff; background: var(--color-primary);
+  border: none; border-radius: var(--radius-md); padding: var(--space-1) var(--space-3);
+  font-family: var(--font-sans); cursor: pointer; transition: background var(--transition-base);
+}
+.gpa-btn-save:hover { background: var(--color-primary-hover); }
+.gpa-btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+.gpa-btn-cancel {
+  font-size: var(--text-xs); color: var(--color-text-muted); background: var(--zol-beige-200);
+  border: none; border-radius: var(--radius-md); padding: var(--space-1) var(--space-3);
+  font-family: var(--font-sans); cursor: pointer;
+}
+
+/* ── 역산 */
+.gpa-calc-wrap {
+  background: var(--zol-beige-50); border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-primary);
+  border-radius: var(--radius-lg); padding: var(--space-5);
+}
+.gpa-calc-title { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--color-text-body); margin-bottom: var(--space-2); }
+.gpa-calc-desc  { font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-4); line-height: var(--leading-normal); }
+.gpa-calc-empty { font-size: var(--text-sm); color: var(--color-text-disabled); }
+.gpa-calc-row   { display: flex; gap: var(--space-4); flex-wrap: wrap; align-items: flex-end; margin-bottom: var(--space-4); }
+.gpa-calc-field { display: flex; flex-direction: column; gap: var(--space-2); }
+.gpa-calc-field label { font-size: var(--text-xs); font-weight: var(--weight-semibold); color: var(--color-text-muted); }
+.gpa-calc-input-wrap { display: flex; align-items: center; gap: var(--space-2); }
+.gpa-calc-unit { font-size: var(--text-sm); color: var(--color-text-muted); white-space: nowrap; }
+
+.gpa-input {
+  width: 160px; height: 44px; padding: 0 var(--space-4);
+  border: 1.5px solid var(--color-border); border-radius: var(--radius-md);
+  font-size: var(--text-base); font-family: var(--font-sans);
+  color: var(--color-text-body); background: var(--color-bg-card);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base); outline: none;
+}
+.gpa-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(108,132,80,0.15); }
+.gpa-input.gpa-input-sm { height: 34px; font-size: var(--text-sm); width: 110px; }
+
+/* 역산 결과 */
+.gpa-result-box {
+  background: var(--zol-green-50); border: 1.5px solid var(--color-primary);
+  border-radius: var(--radius-lg); padding: var(--space-4) var(--space-5);
+  display: flex; flex-direction: column; gap: var(--space-2);
+}
+.gpa-result-box.impossible { border-color: var(--zol-danger); background: #fef2f2; }
+.gpa-result-box.done       { border-color: var(--zol-success); background: #f0fdf4; }
+.gpa-result-top { display: flex; align-items: baseline; gap: var(--space-4); }
+.gpa-result-label { font-size: var(--text-xs); color: var(--color-text-muted); white-space: nowrap; }
+.gpa-result-val { font-size: var(--text-2xl); font-weight: var(--weight-extrabold); color: var(--color-primary); letter-spacing: -0.5px; }
+.gpa-result-box.impossible .gpa-result-val { color: var(--zol-danger); }
+.gpa-result-box.done .gpa-result-val       { color: var(--zol-success); }
+.gpa-result-hint { font-size: var(--text-sm); color: var(--color-text-body); line-height: var(--leading-normal); }
+
+/* ── 성적 분포 */
+.gpa-dist { display: flex; flex-direction: column; gap: var(--space-2); }
+.gpa-dist-row { display: flex; align-items: center; gap: var(--space-3); }
+.gpa-dist-grade { width: 28px; font-size: var(--text-xs); font-weight: var(--weight-bold); color: var(--color-text-body); text-align: right; flex-shrink: 0; }
+.gpa-dist-bar-wrap { flex: 1; height: 8px; background: var(--zol-beige-200); border-radius: var(--radius-full); overflow: hidden; }
+.gpa-dist-bar { height: 100%; background: var(--color-primary); border-radius: var(--radius-full); opacity: 0.75; transition: width var(--duration-slow) var(--ease-out); }
+.gpa-dist-info { font-size: var(--text-xs); color: var(--color-text-muted); min-width: 90px; text-align: right; flex-shrink: 0; }
+
+/* ── 학점 달성 현황 */
+.gpa-credit-list { display: flex; flex-direction: column; gap: var(--space-4); }
+.gpa-credit-item { display: flex; flex-direction: column; gap: var(--space-2); }
+.gpa-credit-header { display: flex; justify-content: space-between; align-items: center; }
+.gpa-credit-label { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--color-text-body); }
+.gpa-credit-val { font-size: var(--text-sm); font-weight: var(--weight-bold); color: var(--color-text-primary); }
+.gpa-credit-val.done { color: var(--color-primary); }
+.gpa-progress { width: 100%; height: 8px; background: var(--zol-beige-200); border-radius: var(--radius-full); overflow: hidden; }
+.gpa-progress-fill { height: 100%; background: var(--zol-beige-400); border-radius: var(--radius-full); transition: width var(--duration-slow) var(--ease-out); }
+.gpa-progress-fill.near { background: var(--zol-warning); }
+.gpa-progress-fill.done { background: var(--color-primary); }
+.gpa-credit-remain { font-size: var(--text-xs); color: var(--color-text-muted); }
+
+/* ── 반응형 */
+@media (max-width: 900px) {
+  .gpa-summary-row { grid-template-columns: 1fr 1fr; }
+  .gpa-summary-row .gpa-card:first-child { grid-column: span 2; }
+}
+@media (max-width: 768px) {
+  .gpa-page { padding: var(--space-5) var(--space-4) var(--space-12); }
+  .gpa-summary-row { grid-template-columns: 1fr; }
+  .gpa-summary-row .gpa-card:first-child { grid-column: span 1; }
+  .gpa-insight-row { gap: var(--space-1); }
+  .gpa-chart { justify-content: flex-start; }
+}
+@media (max-width: 480px) {
+  .gpa-calc-row { flex-direction: column; }
+  .gpa-insight-item { padding: var(--space-1) var(--space-2); }
+}
+/* ── 시뮬레이션 탭 */
+.gpa-sim-tabs {
+  display: flex; gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  border-bottom: 1.5px solid var(--color-border);
+  padding-bottom: 0;
+}
+.gpa-sim-tab {
+  font-size: var(--text-sm); font-weight: var(--weight-semibold);
+  color: var(--color-text-muted); background: none; border: none;
+  padding: var(--space-2) var(--space-4); cursor: pointer;
+  border-bottom: 2.5px solid transparent;
+  margin-bottom: -1.5px;
+  font-family: var(--font-sans);
+  transition: all var(--transition-base);
+}
+.gpa-sim-tab:hover { color: var(--color-text-body); }
+.gpa-sim-tab.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+/* ── 꺾은선 그래프 */
+.gpa-linechart-wrap { display: flex; flex-direction: column; width: 100%; overflow-x: auto; }
+.gpa-linechart-svg { width: 100%; height: 180px; display: block; overflow: visible; }
+.gpa-line-area { fill: var(--zol-green-50); }
+.gpa-line-path { fill: none; stroke: var(--color-primary); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.gpa-line-dot { fill: var(--color-primary); stroke: #fff; stroke-width: 2; }
+.gpa-line-val { font-size: 10px; font-weight: 600; fill: var(--color-text-primary); font-family: var(--font-sans); }
+.gpa-linechart-labels { display: flex; border-top: 1.5px solid var(--color-border); padding-top: var(--space-2); margin-top: 4px; }
+.gpa-linechart-label { display: flex; flex-direction: column; align-items: center; flex: 1; gap: 1px; font-size: 10px; color: var(--color-text-muted); line-height: 1.3; text-align: center; }
+
+/* ── 목표 설정 인라인 */
+.gpa-target-list { display: flex; flex-direction: column; margin-bottom: var(--space-5); }
+.gpa-target-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--color-border); gap: var(--space-4);
+}
+.gpa-target-item:last-child { border-bottom: none; }
+.gpa-target-info { display: flex; flex-direction: column; gap: 2px; }
+.gpa-target-right { display: flex; align-items: center; gap: var(--space-3); flex-shrink: 0; }
+.gpa-target-val-row { display: flex; align-items: center; gap: var(--space-3); }
+.gpa-target-badge { font-size: var(--text-sm); font-weight: var(--weight-bold); color: var(--color-text-primary); background: var(--zol-beige-100); border: 1px solid var(--color-border); border-radius: var(--radius-full); padding: 2px var(--space-3); }
+.gpa-target-badge.unset { color: var(--color-text-disabled); font-weight: var(--weight-regular); }
+.gpa-target-badge.achieved { background: var(--zol-green-50); border-color: var(--zol-green-100); color: var(--color-primary); }
+.gpa-target-diff { font-size: var(--text-xs); font-weight: var(--weight-regular); color: var(--color-text-muted); }
+.gpa-target-edit-col { display: flex; flex-direction: column; gap: var(--space-1); align-items: flex-end; }
+.gpa-target-edit-row { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.gpa-target-error { font-size: var(--text-xs); color: var(--zol-danger); }
+.gpa-input.error { border-color: var(--zol-danger); }
+.gpa-btn-delete {
+  font-size: var(--text-xs); color: var(--zol-danger);
+  background: transparent; border: 1px solid #fecaca;
+  border-radius: var(--radius-md); padding: var(--space-1) var(--space-3);
+  font-family: var(--font-sans); cursor: pointer;
+  transition: background var(--transition-base);
+}
+.gpa-btn-delete:hover { background: #fef2f2; }
+
+/* ── 성적 분포 테이블 */
+.gpa-dist-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); white-space: nowrap;}
+.gpa-dist-table thead tr { border-bottom: 1.5px solid var(--color-border); }
+.gpa-dist-table th { padding: var(--space-2) var(--space-3); font-size: var(--text-xs); font-weight: var(--weight-semibold); color: var(--color-text-muted); text-align: left; }
+.gpa-dist-table th:not(:first-child) { text-align: right; }
+.gpa-dist-table td { padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--color-border); color: var(--color-text-body); }
+.gpa-dist-table tr:last-child td { border-bottom: none; }
+.gpa-dist-table tr.empty td { color: var(--color-text-disabled); }
+.gpa-dist-table td.grade { font-weight: var(--weight-bold); color: var(--color-text-primary); width: 40px; }
+.gpa-dist-table td.right { text-align: right; }
+.gpa-dist-table td.muted { color: var(--color-text-muted); }
+.gpa-dist-pct-wrap { display: flex; align-items: center; gap: var(--space-2); justify-content: flex-end; }
+.gpa-dist-pct-bar { height: 6px; background: var(--color-primary); border-radius: var(--radius-full); opacity: 0.7; min-width: 2px; max-width: 80px; transition: width var(--duration-slow) var(--ease-out); }
+
+/* ── 최소학점 박스 */
+.gpa-min-credits-box { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-4); margin-bottom: var(--space-4); }
+.gpa-min-credits-text { font-size: var(--text-sm); color: var(--color-text-body); line-height: var(--leading-normal); }
+.gpa-min-credits-num  { font-size: var(--text-lg); color: var(--color-primary); }
+.gpa-min-credits-done { font-size: var(--text-sm); color: var(--zol-success); font-weight: var(--weight-semibold); }
+.gpa-min-credits-impossible { font-size: var(--text-sm); color: var(--color-text-muted); line-height: var(--leading-normal); }
+
+/* ── 카드 서브텍스트 */
+.gpa-card-sub { font-size: 11px; color: rgba(255,255,255,0.55); }
+.gpa-card-sub.dark { color: var(--color-text-disabled); }
+.gpa-card-sub.achieved { color: rgba(255,255,255,0.9); font-weight: var(--weight-semibold); }
+.gpa-card-sub.dark.achieved { color: var(--color-primary); font-weight: var(--weight-semibold); }
+.gpa-card-sub.dim { color: rgba(255,255,255,0.35); }
+.gpa-card-sub.dark.dim { color: var(--color-text-disabled); }
+.gpa-subtitle-rule { color: var(--color-text-disabled); }
+/* ── 남은 학점 힌트 */
+.gpa-credit-hint {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+  line-height: var(--leading-normal);
+}
+
+/* ── 과목 조합 예시 */
+.gpa-combo-box {
+  margin-top: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  display: flex; flex-direction: column; gap: var(--space-1);
+}
+.gpa-combo-title {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-muted);
+}
+.gpa-combo-text {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+}
+.gpa-combo-note {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-regular);
+  color: var(--color-text-muted);
+}
+.gpa-combo-disclaimer {
+  font-size: var(--text-xs);
+  color: var(--color-text-disabled);
+}

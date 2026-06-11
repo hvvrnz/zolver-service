@@ -1,0 +1,58 @@
+services:
+  # 1. DB storage
+  db:
+    image: postgres:15
+    container_name: zolver-db
+    restart: always
+    env_file: .env.local
+    ports:
+      - "5432:5432" # local:container port setting
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - ./zolver-backend/models/database:/docker-entrypoint-initdb.d
+      - zolver_db_data:/var/lib/postgresql/data
+
+  # 2. Backend API 
+  api:
+    build:
+      context: . # Zolver/docker-compose.yml
+      dockerfile: ./zolver-backend/Dockerfile
+    container_name: zolver-api
+    env_file: .env.local # env에 있는 기본값
+    environment:
+      - DB_HOST=db # Docker 네트워크 내 DB 주소 Docker용으로 덮어쓰기
+      - PYTHONPATH=/app/zolver-data
+    ports:
+      - "8000:8000"
+    command: uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - .:/app
+      # Ubuntu SSH 키를 컨테이너와 연결 (ro: ReadOnly)
+      - ~/.ssh:/root/.ssh:ro
+    working_dir: /app/zolver-backend
+    depends_on:
+      - db
+
+  # 3. Worker (zolver-data script 실행용)
+  worker:
+    build:
+      context: .
+      dockerfile: ./zolver-data/Dockerfile
+    container_name: zolver-worker
+    env_file: .env.local
+    environment:
+      - DB_HOST=db
+      - PYTHONPATH=/app
+    volumes:
+      - .:/app
+      - ~/.ssh:/root/.ssh:ro
+    working_dir: /app/zolver-data
+    command: tail -f /dev/null # 죽지 않고 대기하도록
+    depends_on:
+      - db
+
+volumes:
+  zolver_db_data:
