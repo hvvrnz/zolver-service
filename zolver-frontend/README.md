@@ -84,7 +84,7 @@ src/
 - 공지사항
 
 ### 이수 과목 등록 (`/record/courserecord`)
-- 학교 포털에서 다운받은 **xlsx 성적표 업로드** → L1·L2 자동 검증 후 파싱
+- 학교 포털에서 다운받은 **.xlsx 성적표 업로드** → L1·L2 자동 검증 후 파싱
 - 과목 직접 입력·수정·삭제
 - 학기별 과목 카드 (과목코드·이수구분·학점·성적 표시)
 
@@ -145,7 +145,7 @@ cp .env.example .env
 | `REACT_APP_KAKAO_CLIENT_ID` | 카카오 앱 REST API 키 | - |
 | `REACT_APP_MAINTENANCE` | 점검 모드 활성화 | `false` |
 
-### ⚠️ 빌드 시 주의사항
+### 빌드 시 주의사항
 
 React 빌드 시 `.env.local`이 `.env`보다 **우선 적용**
 운영 빌드 전 반드시 `.env.local`을 백업하거나 삭제한 후 빌드

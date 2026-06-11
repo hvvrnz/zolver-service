@@ -201,8 +201,8 @@ ssh -i "~/.ssh/zolver-key.pem" -L 5433:localhost:5432 ubuntu@서버IP -N &
 # 2. .env.server 생성
 # ZOLVER_DB_HOST=host.docker.internal
 # ZOLVER_DB_PORT=5433
-# ZOLVER_DB_NAME=zolver_db
-# ZOLVER_DB_USER=zolver
+# ZOLVER_DB_NAME=서버DB이름
+# ZOLVER_DB_USER=서버DB 유저 이름
 # ZOLVER_DB_PASSWORD=서버DB비번
 
 # 3. 로컬 서비스 down (포트 충돌 방지)
@@ -212,7 +212,7 @@ docker compose --env-file .env.local -f docker-compose.local.yml down
 # 4. Airflow 서버 모드로 재시작
 cd ~/Zolver/zolver-airflow
 docker compose --env-file .env.local down
-docker compose --env-file .env.server up -d
+docker compose --env-file .env.server up -d --build
 ```
 
 ---
@@ -251,6 +251,7 @@ WHERE standard_type = 'curriculum';
 
 - `.env.local`, `.env.server` 는 gitignore에 포함되어 있습니다.
 - 서버에서 Airflow를 직접 실행하지 않습니다 (RAM 1GB 제한).
+
 - DAG 재실행 시 중복 반영 없음:
   - `l3_validation`: `validation_score IS NULL` 인 것만 처리
   - `lecture_promotion`: `is_promoted = False` 인 것만 처리
