@@ -54,6 +54,9 @@
 ### AI 수강 추천
 ![AI수강추천](./docs/screenshots/ai_recommend.png)
 
+### 로그 분석 대시보드 (Elastic Stack)
+![로그분석대시보드](./docs/screenshots/elastic_dashboard.png)
+
 ---
 
 ## 시스템 아키텍처
@@ -77,11 +80,37 @@
 
 ---
 
+## 로그 분석 파이프라인 (Elastic Stack)
+
+검증 파이프라인에서 생성된 로그를 수집·분석하여 Schema Drift 탐지 및 업로드 현황을 모니터링합니다.
+
+```
+EC2 서버 (로그 생성)
+    │ scp (수동 수집)
+    ▼
+로컬 WSL2
+    │
+    ▼
+Filebeat → Elasticsearch → Kibana 대시보드
+```
+
+### Schema Drift 탐지
+
+```
+서로 다른 유저가 동일한 form_hash로 반복 실패
+    ↓
+해당 양식 = 파서가 인식 못하는 새 포맷
+    ↓
+학교 측 성적표 양식 변경 감지 → 파서 업데이트 필요
+```
+
+> 자세한 내용은 [zolver-elastic README](./zolver-elastic/README.md)를 참고하세요.
+
+---
+
 ## AI 수강 추천 — 로직 상세
 
 ### 데이터 수집 우선순위
-
-유저별 수강 추천 시 아래 데이터를 순서대로 활용합니다.
 
 ```
 1. 유저 태그 달성 현황  →  부족한 졸업요건 파악
@@ -168,6 +197,7 @@ lecture_master에서 '필' 포함 과목 없음 → is_required = 1로 동일
 | **zolver-worker** | L1·L2 검증 파이프라인 (Worker) |
 | **zolver-airflow** | L3 신뢰도 검증 Airflow DAG |
 | **zolver-frontend** | React SPA |
+| **zolver-elastic** | 로그 수집·분석 파이프라인 (Elastic Stack) |
 
 ---
 
@@ -180,6 +210,7 @@ lecture_master에서 '필' 포함 과목 없음 → is_required = 1로 동일
 | AI | Google Gemini API (gemini-2.5-flash) |
 | Worker | Python (L1·L2 검증 파이프라인) |
 | Batch | Apache Airflow (L3, 로컬 + SSH 터널) |
+| 로그 분석 | Elastic Stack (Filebeat · Elasticsearch · Kibana) |
 | 인증 | 카카오 OAuth 2.0 |
 | 인프라 | AWS EC2 (Ubuntu), Docker Compose |
 | 개발 환경 | Windows + WSL2 |
