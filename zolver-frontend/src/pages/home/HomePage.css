@@ -205,4 +205,137 @@
 @media (max-width:768px) {
   .home-progress-row { grid-template-columns:1fr; }
   .home-grid { grid-template-columns:1fr; gap:var(--space-4); }
+  .home-card-full { grid-column: 1; }
+}
+
+@media (max-width:480px) {
+  .home-page { padding: var(--space-4) var(--space-3) var(--space-12); overflow-x: hidden; }
+  .home-container { overflow-x: hidden; max-width: 100%; }
+
+  /* AI 배너 */
+  .home-ai-banner { flex-direction: column; align-items: flex-start; gap: var(--space-2); padding: var(--space-3) var(--space-4); }
+  .home-ai-banner-btn { width: 100%; text-align: center; padding: 8px; }
+
+  /* 카드 */
+  .home-card { padding: var(--space-4); min-width: 0; overflow: hidden; }
+  .home-card-full { grid-column: 1; }
+
+  /* 수강예정/체크리스트 */
+  .home-sim-list { gap: var(--space-2); }
+  .home-sim-item { padding: var(--space-2) var(--space-3); }
+  .home-sim-memos { gap: var(--space-1); }
+  .home-checklist { max-height: 180px; }
+  .home-check-item { padding: 6px 10px; }
+
+  /* 공지사항 */
+  .home-notice-scroll { gap: var(--space-2); }
+  .home-notice-scroll .home-notice-item { min-width: 200px; }
+  .home-notice-list { gap: var(--space-2); }
+  .home-notice-item { padding: var(--space-2) var(--space-3); }
+  .home-notice-content { font-size: 13px; }
+
+  /* 졸업요건 메모 빈 상태 */
+  .home-card-empty { padding: var(--space-5) 0; font-size: 13px; }
+
+  /* 프로그레스 */
+  .home-progress-card { padding: var(--space-3) var(--space-4); }
+
+  /* 히어로 */
+  .home-hero { padding: var(--space-4); }
+  .home-stat { padding: 0 var(--space-2); }
+  .home-stat-val { font-size: var(--text-lg); }
+  .home-user-name { font-size: var(--text-xl); }
+
+  /* 모달 */
+  .home-modal { margin: var(--space-3); max-width: calc(100vw - 24px) !important; }
+  .home-modal-header { padding: var(--space-3) var(--space-4); }
+  .home-modal-body { padding: var(--space-4); }
+  .home-modal-footer { padding: var(--space-3) var(--space-4); flex-wrap: wrap; gap: var(--space-2); }
+  .home-modal-footer button { flex: 1; min-width: 100px; }
+}
+/* ════════════════════════════
+   AI 추천 배너
+   ════════════════════════════ */
+.home-ai-banner {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: var(--space-4) var(--space-6);
+  background: linear-gradient(135deg, #f3f6ee 0%, #e8f0d8 100%);
+  border: 1.5px solid var(--zol-green-100, #d4dcc9);
+  border-radius: var(--radius-xl);
+  cursor: pointer; transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+.home-ai-banner:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); border-color: var(--color-primary); }
+.home-ai-banner-left { display: flex; align-items: center; gap: var(--space-3); }
+.home-ai-banner-title { font-size: var(--text-sm); font-weight: var(--weight-bold); color: var(--color-text-primary); }
+.home-ai-banner-sub { font-size: var(--text-xs); color: var(--color-text-muted); margin-top: 2px; }
+.home-ai-banner-btn {
+  font-size: var(--text-sm); font-weight: var(--weight-bold);
+  color: var(--color-primary); white-space: nowrap;
+  padding: 6px 16px; border-radius: var(--radius-full);
+  background: #fff; border: 1.5px solid var(--color-primary);
+  transition: all 0.2s;
+}
+.home-ai-banner:hover .home-ai-banner-btn { background: var(--color-primary); color: #fff; }
+
+/* AI 커서 깜빡임 */
+.home-ai-cursor { animation: blink 1s step-end infinite; color: var(--color-primary); }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ════════════════════════════
+   공지사항 가로 스크롤
+   ════════════════════════════ */
+.home-notice-scroll {
+  display: flex; gap: var(--space-3);
+  overflow-x: auto; scroll-snap-type: x mandatory;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+.home-notice-scroll::-webkit-scrollbar { display: none; }
+.home-notice-scroll .home-notice-item {
+  min-width: 260px; scroll-snap-align: start; flex-shrink: 0;
+}
+.home-notice-arrow {
+  display: flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: var(--radius-full);
+  border: 1px solid var(--color-border); background: var(--color-bg-card);
+  color: var(--color-text-muted); cursor: pointer; transition: all 0.2s;
+}
+.home-notice-arrow:hover { border-color: var(--color-primary); color: var(--color-primary); }
+/* ════════════════════════════
+   모바일 (480px 이하)
+   ════════════════════════════ */
+@media (max-width: 480px) {
+  .home-page { padding: var(--space-4) var(--space-3) var(--space-12); }
+
+  /* AI 배너 */
+  .home-ai-banner { flex-direction: column; align-items: flex-start; gap: var(--space-3); padding: var(--space-4); }
+  .home-ai-banner-btn { width: 100%; text-align: center; }
+
+  /* 히어로 */
+  .home-hero { padding: var(--space-4); gap: var(--space-4); }
+  .home-stats { flex-wrap: wrap; }
+  .home-stat { padding: 0 var(--space-2); }
+  .home-user-name { font-size: var(--text-xl); }
+
+  /* 그리드/카드 */
+  .home-grid { gap: var(--space-3); }
+  .home-card { padding: var(--space-4); }
+
+  /* 체크리스트 */
+  .home-checklist { max-height: 200px; }
+  .home-check-item { padding: 6px 10px; }
+
+  /* 시뮬레이션 카드 */
+  .home-sim-item { padding: var(--space-2) var(--space-3); }
+
+  /* 공지사항 */
+  .home-notice-scroll .home-notice-item { min-width: 220px; }
+
+  /* AI 모달 */
+  .home-modal { margin: var(--space-3); max-width: calc(100vw - 24px) !important; }
+  .home-modal-header { padding: var(--space-3) var(--space-4); }
+  .home-modal-body { padding: var(--space-4); }
+  .home-modal-footer { padding: var(--space-3) var(--space-4); flex-wrap: wrap; gap: var(--space-2); }
+  .home-modal-footer button { flex: 1; }
 }

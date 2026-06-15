@@ -25,3 +25,5 @@ SQLAlchemy==2.0.48
 typing_extensions==4.15.0
 python-multipart
 aiofiles==24.1.0
+
+google-genai

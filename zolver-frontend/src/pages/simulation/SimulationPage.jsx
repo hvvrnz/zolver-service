@@ -8,7 +8,7 @@ import {
   createSimCourse, updateSimCourse, deleteSimCourse
 } from '../../api/simulation';
 import { getTags } from '../../api/tags';
-import { getMyCourses } from '../../api/courses';
+import { getMyCourses, getVerifiedCourses } from '../../api/courses';
 import { getMyInfo } from '../../api/user';
 import './SimulationPage.css';
 
@@ -161,6 +161,87 @@ export default function SimulationPage() {
   const [collapsedGroups, setCollapsedGroups]       = useState({});
   const toggleGroup = (grp) => setCollapsedGroups(p => ({ ...p, [grp]: !p[grp] }));
 
+  // 자동완성 (추가 폼)
+  const [suggestions, setSuggestions]   = useState([]);
+  const [searchQuery, setSearchQuery]   = useState('');
+  const searchTimerRef                  = useRef(null);
+  const searchInputRef                  = useRef(null);
+  const [suggPanelStyle, setSuggPanelStyle] = useState({});
+
+  // 자동완성 (수정 폼)
+  const [editSuggestions, setEditSuggestions]   = useState([]);
+  const [editSearchQuery, setEditSearchQuery]   = useState('');
+  const editSearchTimerRef                      = useRef(null);
+  const editSearchInputRef                      = useRef(null);
+  const [editSuggPanelStyle, setEditSuggPanelStyle] = useState({});
+
+  const calcSuggPos = (inputRef, setStyle) => {
+    if (!inputRef.current) return;
+    const rect = inputRef.current.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    if (spaceBelow < 220) {
+      setStyle({ position: 'fixed', bottom: window.innerHeight - rect.top + 2, left: rect.left, width: rect.width, top: 'auto' });
+    } else {
+      setStyle({ position: 'fixed', top: rect.bottom + 2, left: rect.left, width: rect.width });
+    }
+  };
+
+  const searchCourses = (query) => {
+    setSearchQuery(query);
+    setCourseForm(f => ({ ...f, memo: query }));
+    clearTimeout(searchTimerRef.current);
+    if (!query) { setSuggestions([]); return; }
+    calcSuggPos(searchInputRef, setSuggPanelStyle);
+    searchTimerRef.current = setTimeout(async () => {
+      try {
+        const res = await getVerifiedCourses(query);
+        const seen = new Set();
+        const deduped = (res.data.courses || []).filter(c => {
+          const key = c.lecture_name + c.system_category;
+          if (seen.has(key)) return false;
+          seen.add(key); return true;
+        });
+        setSuggestions(deduped);
+        calcSuggPos(searchInputRef, setSuggPanelStyle);
+      } catch { setSuggestions([]); }
+    }, 300);
+  };
+
+  const selectSuggestion = (course) => {
+    setCourseForm(f => ({ ...f, memo: course.lecture_name, system_category: course.system_category,
+      lecture_category: course.lecture_category, lecture_credit: course.lecture_credit, tag_id: '' }));
+    setSearchQuery(course.lecture_name);
+    setSuggestions([]);
+  };
+
+  const searchEditCourses = (query) => {
+    setEditSearchQuery(query);
+    setEditForm(f => ({ ...f, memo: query }));
+    clearTimeout(editSearchTimerRef.current);
+    if (!query) { setEditSuggestions([]); return; }
+    calcSuggPos(editSearchInputRef, setEditSuggPanelStyle);
+    editSearchTimerRef.current = setTimeout(async () => {
+      try {
+        const res = await getVerifiedCourses(query);
+        const seen = new Set();
+        const deduped = (res.data.courses || []).filter(s => {
+          const key = s.lecture_name + s.system_category;
+          if (seen.has(key)) return false;
+          seen.add(key); return true;
+        });
+        setEditSuggestions(deduped);
+        calcSuggPos(editSearchInputRef, setEditSuggPanelStyle);
+      } catch { setEditSuggestions([]); }
+    }, 300);
+  };
+
+  const selectEditSuggestion = (course) => {
+    setEditForm(f => ({ ...f, memo: course.lecture_name, system_category: course.system_category,
+      lecture_credit: course.lecture_credit, tag_id: '' }));
+    setEditSearchQuery(course.lecture_name);
+    setEditSuggestions([]);
+  };
+
   const fetchAll = useCallback(async () => {
     try {
       setLoading(true);
@@ -251,7 +332,7 @@ export default function SimulationPage() {
       await createSimCourse({ plan_id: planId, system_category: courseForm.system_category,
         tag_id: courseForm.tag_id && courseForm.tag_id !== '' ? Number(courseForm.tag_id) : null,
         lecture_credit: Number(courseForm.lecture_credit) || 3, memo: courseForm.memo || null });
-      await fetchAll(); setShowCourseForm(null); setCourseForm(EMPTY_COURSE);
+      await fetchAll(); setShowCourseForm(null); setCourseForm(EMPTY_COURSE); setSearchQuery(''); setSuggestions([]);
     } catch (err) { console.error(err); } finally { setCourseLoading(false); }
   };
   const handleUpdateCourse = async (id) => {
@@ -263,11 +344,24 @@ export default function SimulationPage() {
     } catch (err) { console.error(err); }
   };
   const handleToggle = async (c) => {
+    setPlans(prev => prev.map(plan => ({
+      ...plan,
+      courses: (plan.courses || []).map(course =>
+        course.sim_course_id === c.sim_course_id ? { ...course, is_active: !c.is_active } : course
+      )
+    })));
     try {
       await updateSimCourse(c.sim_course_id, { system_category: c.system_category,
         tag_id: c.tag_id || null, lecture_credit: c.lecture_credit, memo: c.memo || null, is_active: !c.is_active });
-      await fetchAll();
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      console.error(err);
+      setPlans(prev => prev.map(plan => ({
+        ...plan,
+        courses: (plan.courses || []).map(course =>
+          course.sim_course_id === c.sim_course_id ? { ...course, is_active: c.is_active } : course
+        )
+      })));
+    }
   };
   const handleDeleteCourse = async (id) => {
     try { await deleteSimCourse(id); await fetchAll(); } catch (err) { console.error(err); }
@@ -567,18 +661,52 @@ export default function SimulationPage() {
                                       <input className="zol-input sim-input-credit" type="number" min="1"
                                         value={editForm.lecture_credit}
                                         onChange={e => setEditForm({...editForm, lecture_credit: e.target.value})}/>
-                                      <input className="zol-input sim-input-memo" placeholder="메모"
-                                        value={editForm.memo} onChange={e => setEditForm({...editForm, memo: e.target.value})}/>
+                                      <div style={{ position: 'relative', flex: 1 }}>
+                                        <input
+                                          ref={editSearchInputRef}
+                                          className="zol-input sim-input-memo"
+                                          placeholder="과목명 검색 또는 직접 입력"
+                                          value={editSearchQuery}
+                                          onChange={e => searchEditCourses(e.target.value)}
+                                          onKeyDown={e => e.key === 'Enter' && handleUpdateCourse(c.sim_course_id)}
+                                        />
+                                        {editSuggestions.length > 0 && (
+                                          <div style={{
+                                            ...editSuggPanelStyle,
+                                            background: '#fff',
+                                            border: '1px solid var(--color-border)',
+                                            borderRadius: 8, zIndex: 99999,
+                                            maxHeight: 200, overflowY: 'auto',
+                                            boxShadow: '0 4px 16px rgba(0,0,0,0.13)',
+                                          }}>
+                                            {editSuggestions.slice(0, 8).map(s => (
+                                              <div key={s.std_lecture_id}
+                                                style={{ padding: '8px 12px', cursor: 'pointer', fontSize: 13, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                                                onMouseEnter={e => e.currentTarget.style.background = 'var(--zol-beige-50)'}
+                                                onMouseLeave={e => e.currentTarget.style.background = ''}
+                                                onMouseDown={() => selectEditSuggestion(s)}>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, minWidth: 0 }}>
+                                                  <span className={`sim-cat-chip sm ${s.system_category}`}>{CAT_LABEL[s.system_category]}</span>
+                                                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.lecture_name}</span>
+                                                </div>
+                                                <span style={{ color: 'var(--color-text-disabled)', fontSize: 11, marginLeft: 8, flexShrink: 0 }}>{s.lecture_credit}학점</span>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        )}
+                                      </div>
                                       <button className="btn-icon-confirm" onClick={() => handleUpdateCourse(c.sim_course_id)}><FiCheck size={13}/></button>
-                                      <button className="btn-icon-cancel" onClick={() => setEditId(null)}><FiX size={13}/></button>
+                                      <button className="btn-icon-cancel" onClick={() => { setEditId(null); setEditSuggestions([]); setEditSearchQuery(''); }}><FiX size={13}/></button>
                                     </div>
                                   ) : (
                                     <div className="sim-course-view-row">
                                       <div className="sim-course-left">
-                                        <span className={`sim-cat-chip sm ${c.system_category}`}>{CAT_LABEL[c.system_category]}</span>
-                                        {tagLabel && <span className="sim-course-tag">{tagLabel}</span>}
-                                        <span className="sim-course-credit">{c.lecture_credit}학점</span>
-                                        {c.memo && <span className="sim-course-memo">{c.memo}</span>}
+                                        {c.memo && <span className="sim-course-name">{c.memo}</span>}
+                                        <div className="sim-course-meta">
+                                          <span className={`sim-cat-chip sm ${c.system_category}`}>{CAT_LABEL[c.system_category]}</span>
+                                          {tagLabel && <span className="sim-course-tag">{tagLabel}</span>}
+                                          <span className="sim-course-credit">{c.lecture_credit}학점</span>
+                                        </div>
                                       </div>
                                       <div className="sim-course-actions">
                                         <button className={`btn-toggle ${c.is_active ? 'active' : 'inactive'}`}
@@ -588,6 +716,8 @@ export default function SimulationPage() {
                                         <button className="btn-icon-sm" onClick={() => {
                                           setEditId(c.sim_course_id);
                                           setEditForm({ system_category: c.system_category, tag_id: c.tag_id||'', lecture_credit: c.lecture_credit, memo: c.memo||'' });
+                                          setEditSearchQuery(c.memo || '');
+                                          setEditSuggestions([]);
                                         }}><FiEdit2 size={12}/></button>
                                         <button className="btn-icon-sm danger" onClick={() => handleDeleteCourse(c.sim_course_id)}>
                                           <FiTrash2 size={12}/>
@@ -621,13 +751,49 @@ export default function SimulationPage() {
                             <input className="zol-input sim-input-credit" type="number" min="1" placeholder="학점"
                               value={courseForm.lecture_credit}
                               onChange={e => setCourseForm({...courseForm, lecture_credit: e.target.value})}/>
-                            <input className="zol-input sim-input-memo" placeholder="메모 (예: 컴퓨터시스템)"
-                              value={courseForm.memo} onChange={e => setCourseForm({...courseForm, memo: e.target.value})}
-                              onKeyDown={e => e.key === 'Enter' && handleCreateCourse(plan.plan_id)}/>
+                            <div style={{ position: 'relative', flex: 1 }}>
+                              <input
+                                ref={searchInputRef}
+                                className="zol-input sim-input-memo"
+                                placeholder="과목명 검색 또는 직접 입력"
+                                value={searchQuery}
+                                onChange={e => searchCourses(e.target.value)}
+                                onKeyDown={e => e.key === 'Enter' && handleCreateCourse(plan.plan_id)}
+                              />
+                              {suggestions.length > 0 && (
+                                <div style={{
+                                  ...suggPanelStyle,
+                                  background: '#fff',
+                                  border: '1px solid var(--color-border)',
+                                  borderRadius: 8, zIndex: 99999,
+                                  maxHeight: 200, overflowY: 'auto',
+                                  boxShadow: '0 4px 16px rgba(0,0,0,0.13)',
+                                }}>
+                                  {suggestions.slice(0, 8).map(c => (
+                                    <div key={c.std_lecture_id}
+                                      style={{ padding: '8px 12px', cursor: 'pointer', fontSize: 13, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                                      onMouseEnter={e => e.currentTarget.style.background = 'var(--zol-beige-50)'}
+                                      onMouseLeave={e => e.currentTarget.style.background = ''}
+                                      onMouseDown={() => selectSuggestion(c)}>
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, minWidth: 0 }}>
+                                        <span className={`sim-cat-chip sm ${c.system_category}`}>{CAT_LABEL[c.system_category]}</span>
+                                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.lecture_name}</span>
+                                      </div>
+                                      <span style={{ color: 'var(--color-text-disabled)', fontSize: 11, marginLeft: 8, flexShrink: 0 }}>{c.lecture_credit}학점</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
                             <button className="btn-icon-confirm" onClick={() => handleCreateCourse(plan.plan_id)} disabled={courseLoading}>
                               <FiCheck size={13}/>
                             </button>
-                            <button className="btn-icon-cancel" onClick={() => { setShowCourseForm(null); setCourseForm(EMPTY_COURSE); }}>
+                            <button className="btn-icon-cancel" onClick={() => {
+                              setShowCourseForm(null);
+                              setCourseForm(EMPTY_COURSE);
+                              setSearchQuery('');
+                              setSuggestions([]);
+                            }}>
                               <FiX size={13}/>
                             </button>
                           </div>

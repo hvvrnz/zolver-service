@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from core.security import generate_unique_hash
+from core.chosung import is_chosung, get_chosung
 
 
 # 내 과목 전체 조회
@@ -135,29 +136,21 @@ async def get_verified_lectures(db: AsyncSession, keyword: str = ""):
     result = await db.execute(
         text("""
             SELECT
-                std_lecture_id,
-                lecture_code,
-                lecture_name,
-                category_type        AS lecture_category,
-                credits              AS lecture_credit,
-                system_category,
-                standard_type,
-                validation_id,
-                area,
-                curriculum_ver,
-                last_completed_year,
-                last_completed_semester,
-                metadata,
-                admission_stats,
-                updated_at
+                std_lecture_id, lecture_code, lecture_name,
+                category_type AS lecture_category,
+                credits AS lecture_credit,
+                system_category, standard_type, validation_id,
+                area, curriculum_ver, last_completed_year,
+                last_completed_semester, metadata, admission_stats, updated_at
             FROM lecture_master
-            WHERE (:keyword = '' OR lecture_name ILIKE :like_keyword)
             ORDER BY system_category, lecture_category, lecture_name
-        """),
-        {
-            "keyword":      keyword,
-            "like_keyword": f"%{keyword}%"
-        }
+        """)
     )
-    rows = result.mappings().all()
-    return [dict(row) for row in rows]
+    rows = [dict(row) for row in result.mappings().all()]
+
+    if not keyword:
+        return rows
+    elif is_chosung(keyword):
+        return [r for r in rows if keyword in get_chosung(r['lecture_name'])]
+    else:
+        return [r for r in rows if keyword.lower() in r['lecture_name'].lower()]

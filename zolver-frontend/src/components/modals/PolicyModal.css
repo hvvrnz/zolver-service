@@ -76,3 +76,17 @@
     max-height: 90vh;
   }
 }
+
+@media (max-width: 480px) {
+  .modal-overlay { padding: 12px; }
+  .modal-content {
+    padding: 16px;
+    border-radius: 8px;
+    max-height: 88vh;
+  }
+  .modal-close {
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+  }
+}

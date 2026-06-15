@@ -48,3 +48,5 @@ db.sqlite3
 storage/uploads/*
 !storage/uploads/.gitkeep
 **/logs/
+zolver-elastic/logs/
+zolver-airflow/backups/*.sql

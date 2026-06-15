@@ -16,6 +16,7 @@ from api.v1.user_name_router import router as user_name_router
 from api.v1.user_credits_router import router as user_credits_router
 from api.v1.register_router import router as register_router
 from api.v1.user_gpa_router import router as user_gpa_router
+from api.v1.ai_router import router as ai_router
 
 # 환경변수 ENV가 'prod'면 docs를 숨김
 env = os.getenv("ENV", "dev")
@@ -48,6 +49,8 @@ app.include_router(user_name_router,    prefix="/api/v1")
 app.include_router(user_credits_router, prefix="/api/v1")
 app.include_router(register_router, prefix="/api/v1")
 app.include_router(user_gpa_router, prefix="/api/v1")
+app.include_router(ai_router, prefix="/api/v1")
+
 
 @app.get("/")
 async def root():
