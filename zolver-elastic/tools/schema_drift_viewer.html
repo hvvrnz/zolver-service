@@ -87,7 +87,7 @@
   }
   .memo-item .memo-header { display: flex; justify-content: space-between; align-items: flex-start; }
   .memo-item .memo-major { font-weight: 600; color: #1a1a1a; font-size: 13px; margin-bottom: 4px; }
-  .memo-item .memo-hash { color: #888; font-family: monospace; font-size: 11px; }
+  .memo-item .memo-hash { color: #888; font-family: monospace; font-size: 11px; line-height: 1.7; }
   .memo-item .memo-body { color: #444; margin-top: 6px; line-height: 1.5; white-space: pre-wrap; }
   .memo-item .memo-del { color: #ccc; cursor: pointer; font-size: 16px; line-height: 1; flex-shrink: 0; }
   .memo-item .memo-del:hover { color: #c0392b; }
@@ -183,7 +183,7 @@
 const EXPECTED_HEADERS = {
   '년도': 2, '학기': 3, '이수구분': 5, '학수번호': 7,
   '과목명': 12, '학점': 23, '등급': 25, '인정구분': 27, '삭제구분': 33
-}; // 기댓값: 헤더명 → 열 번호(1-based)
+};
 
 const EXPECTED_COORDS = {
   '2,2': '학생인적사항',
@@ -197,17 +197,15 @@ const EXPECTED_COORDS = {
 const COLS = 50;
 const MEMO_KEY = 'zolver_schema_memos';
 
-// 헤더 키워드 (공백 제거 후 비교)
 const HEADER_KEYWORDS = ['년도','학기','이수구분','학수번호','과목명','학점','등급','인정구분','삭제구분'];
 
 function normalize(s) { return (s || '').replace(/\s+/g, '').toLowerCase(); }
 
 // ── 헤더 자동 감지 ────────────────────────────────────────────────────────
-// 4~21행 범위에서 "개인별전체성적조회" 찾고, 그 다음 행을 헤더로 탐색
 function detectHeaders(flat, rows) {
   let subTitleRow = -1;
   for (let r = 4; r <= Math.min(21, rows); r++) {
-    const val = normalize(flat[(r-1)*COLS + 1] || ''); // B열 기준
+    const val = normalize(flat[(r-1)*COLS + 1] || '');
     if (val.includes('개인별전체성적조회') || val.includes('개인별')) {
       subTitleRow = r;
       break;
@@ -216,7 +214,7 @@ function detectHeaders(flat, rows) {
   if (subTitleRow === -1) return null;
 
   const headerRow = subTitleRow + 1;
-  const detected = {}; // 헤더명 → 실제 열
+  const detected = {};
   if (headerRow > rows) return { subTitleRow, headerRow, detected };
 
   for (let c = 1; c <= COLS; c++) {
@@ -232,12 +230,10 @@ function detectHeaders(flat, rows) {
 
 // ── 학과명 추출 ───────────────────────────────────────────────────────────
 function extractMajor(flat, rows) {
-  // 인적사항 블록에서 소속 찾기 — "소 속" 라벨 다음 셀
   for (let r = 1; r <= Math.min(15, rows); r++) {
     for (let c = 1; c <= COLS; c++) {
       const val = normalize(flat[(r-1)*COLS + (c-1)] || '');
       if (val === '소속') {
-        // 같은 행에서 오른쪽으로 값 찾기
         for (let cc = c+1; cc <= Math.min(c+10, COLS); cc++) {
           const v = flat[(r-1)*COLS + (cc-1)] || '';
           if (v && v !== '[PRIVATE]' && v.trim()) return v;
@@ -275,15 +271,12 @@ function parseAndRender() {
   const fileName = get('file_name') || get('file_name.keyword');
   const ts = get('timestamp') || get('timestamp.keyword');
 
-  // 학과명 추출
   const major = extractMajor(flat, ROWS);
 
   currentMeta = { formHash, fileName, ts, major };
 
-  // 메모 입력란에 학과명 자동 채우기
   if (major) document.getElementById('memo-major').value = major;
 
-  // 메타바
   document.getElementById('meta-bar').innerHTML = `
     <div class="chip">form_hash: <b>${formHash}</b></div>
     <div class="chip">파일명: <b>${fileName}</b></div>
@@ -292,7 +285,6 @@ function parseAndRender() {
     ${major ? `<div class="chip major-chip">소속: <b>${major}</b></div>` : ''}
   `;
 
-  // 헤더 감지
   const hd = detectHeaders(flat, ROWS);
   if (hd) {
     let hdHtml = `<tr><td>성적 제목행</td><td>${hd.subTitleRow}행</td></tr>`;
@@ -312,7 +304,6 @@ function parseAndRender() {
     document.getElementById('header-detect').style.display = 'none';
   }
 
-  // 통계
   let nonEmpty = 0, privateCount = 0, expectedOk = 0, expectedFail = 0;
   flat.forEach((v, idx) => {
     const r = Math.floor(idx / COLS) + 1;
@@ -331,7 +322,6 @@ function parseAndRender() {
   document.getElementById('stats').innerHTML =
     `전체 <b>${total}</b>셀 &nbsp;·&nbsp; 값 있는 셀: <b>${nonEmpty}</b> &nbsp;·&nbsp; 마스킹: <b>${privateCount}</b> &nbsp;·&nbsp; 기댓값 일치: <b style="color:#155724">${expectedOk}</b> / 불일치: <b style="color:#721c24">${expectedFail}</b>`;
 
-  // 그리드
   let html = '<table class="grid"><thead><tr><th class="corner"></th>';
   for (let c = 1; c <= COLS; c++) html += `<th>${c}</th>`;
   html += '</tr></thead><tbody>';
@@ -423,7 +413,11 @@ function renderMemos() {
       <div class="memo-header">
         <div>
           <div class="memo-major">${m.major}</div>
-          <div class="memo-hash">form_hash: ${m.formHash} &nbsp;·&nbsp; ${m.savedAt}</div>
+          <div class="memo-hash">
+            form_hash: ${m.formHash}<br>
+            file_name: ${m.fileName}<br>
+            ${m.savedAt}
+          </div>
         </div>
         <span class="memo-del" onclick="deleteMemo(${m.id})">×</span>
       </div>
@@ -442,7 +436,6 @@ function clearAll() {
   currentMeta = {};
 }
 
-// 초기 메모 렌더
 renderMemos();
 </script>
 </body>
