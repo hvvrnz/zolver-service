@@ -18,13 +18,14 @@ class RuleCode(Enum):
     CONTENT_SCAN     = ("R200", "WHITELIST_CONTENT_SCAN")     # 화이트리스트 스캔
     SCHEMA_EXTRACT   = ("R201", "EXCEL_SCHEMA_EXTRACTION")    # 스키마 추출
     SCHEMA_COORDS    = ("R202", "COORDINATE_MAPPING_PROCESS") # 좌표 매핑 처리
+    SCHEMA_DYNAMIC   = ("R206", "DYNAMIC_SCHEMA_RECOVERY") # 동적 스키마 복구 
 
     # ETL Process
     DATA_EXTRACT     = ("R203", "TRANSCRIPT_DATA_EXTRACTION") # 데이터 추출
     DATA_TRANSFORM   = ("R204", "TRANSCRIPT_DATA_TRANSFORM")  # 데이터 변환
     DATA_LOAD        = ("R205", "DATABASE_LOADING_PROCESS")   # 데이터 적재
 
-    SCHEMA_DYNAMIC   = ("R206", "DYNAMIC_SCHEMA_RECOVERY") # 동적 스키마 복구 
+   
 
 
     def __init__(self, code, message):
