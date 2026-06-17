@@ -24,6 +24,9 @@ class RuleCode(Enum):
     DATA_TRANSFORM   = ("R204", "TRANSCRIPT_DATA_TRANSFORM")  # 데이터 변환
     DATA_LOAD        = ("R205", "DATABASE_LOADING_PROCESS")   # 데이터 적재
 
+    SCHEMA_DYNAMIC   = ("R206", "DYNAMIC_SCHEMA_RECOVERY") # 동적 스키마 복구 
+
+
     def __init__(self, code, message):
         self.code = code
         self.message = message

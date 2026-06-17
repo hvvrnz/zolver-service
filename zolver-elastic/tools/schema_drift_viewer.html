@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zolver — Schema Mismatch Viewer</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f5f5f3; color: #1a1a1a; padding: 2rem; min-height: 100vh;
+  }
+  h1 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #888; margin-bottom: 1.5rem; }
+
+  .card {
+    background: #fff; border: 1px solid #e0e0e0;
+    border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem;
+  }
+  .card-title {
+    font-size: 13px; font-weight: 600; color: #444;
+    margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+  }
+  label { font-size: 13px; font-weight: 500; color: #555; display: block; margin-bottom: 6px; }
+
+  textarea {
+    width: 100%; height: 110px; font-family: 'Courier New', monospace;
+    font-size: 12px; border: 1px solid #ddd; border-radius: 6px;
+    padding: 10px; resize: vertical; color: #333; background: #fafafa;
+  }
+  textarea:focus { outline: none; border-color: #999; background: #fff; }
+
+  input[type="text"] {
+    width: 100%; font-size: 13px; border: 1px solid #ddd; border-radius: 6px;
+    padding: 7px 10px; color: #333; background: #fafafa;
+  }
+  input[type="text"]:focus { outline: none; border-color: #999; background: #fff; }
+
+  .memo-textarea {
+    width: 100%; height: 70px; font-size: 12px; border: 1px solid #ddd;
+    border-radius: 6px; padding: 8px 10px; resize: vertical;
+    color: #333; background: #fafafa; font-family: inherit;
+  }
+  .memo-textarea:focus { outline: none; border-color: #999; background: #fff; }
+
+  .btn-row { display: flex; gap: 8px; margin-top: 10px; align-items: center; flex-wrap: wrap; }
+  button {
+    font-size: 13px; font-weight: 500; padding: 7px 18px; border-radius: 6px;
+    cursor: pointer; border: 1px solid #ccc; background: #fff; color: #333;
+    transition: background 0.12s;
+  }
+  button:hover { background: #f0f0f0; }
+  button.primary { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+  button.primary:hover { background: #333; }
+  button.danger { background: #fff; color: #c0392b; border-color: #e0b0b0; }
+  button.danger:hover { background: #fdf0f0; }
+
+  .error { font-size: 13px; color: #c0392b; margin-top: 8px; display: none; }
+
+  /* 메타 */
+  .meta-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem; }
+  .chip { background: #fff; border: 1px solid #e0e0e0; border-radius: 6px; padding: 4px 10px; font-size: 12px; color: #555; }
+  .chip b { color: #1a1a1a; }
+  .chip.major-chip { background: #f0f4ff; border-color: #c0cff0; max-width: 100%; word-break: break-all; }
+
+  /* 범례 */
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 10px; font-size: 12px; color: #555; align-items: center; }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .dot { width: 13px; height: 13px; border-radius: 3px; flex-shrink: 0; }
+
+  /* 헤더 감지 결과 */
+  .header-detect {
+    background: #fffbea; border: 1px solid #f0d060; border-radius: 8px;
+    padding: 10px 14px; margin-bottom: 10px; font-size: 12px;
+  }
+  .header-detect .hd-title { font-weight: 600; color: #7d5a00; margin-bottom: 6px; }
+  .header-detect table { font-size: 12px; border-collapse: collapse; width: 100%; }
+  .header-detect td { padding: 3px 8px; border-bottom: 1px solid #f0e0a0; }
+  .header-detect td:first-child { color: #888; width: 80px; }
+  .diff-row td { color: #c0392b !important; font-weight: 600; }
+
+  /* 메모 목록 */
+  .memo-list { margin-top: 10px; }
+  .memo-item {
+    background: #f9f9f7; border: 1px solid #e8e8e4; border-radius: 8px;
+    padding: 10px 12px; margin-bottom: 8px; font-size: 12px;
+  }
+  .memo-item .memo-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .memo-item .memo-major { font-weight: 600; color: #1a1a1a; font-size: 13px; margin-bottom: 4px; }
+  .memo-item .memo-hash { color: #888; font-family: monospace; font-size: 11px; }
+  .memo-item .memo-body { color: #444; margin-top: 6px; line-height: 1.5; white-space: pre-wrap; }
+  .memo-item .memo-del { color: #ccc; cursor: pointer; font-size: 16px; line-height: 1; flex-shrink: 0; }
+  .memo-item .memo-del:hover { color: #c0392b; }
+  .memo-count { font-size: 12px; color: #888; margin-left: 6px; }
+
+  /* 그리드 */
+  .grid-wrapper { overflow: auto; border: 1px solid #ddd; border-radius: 8px; background: #fff; max-height: 70vh; }
+  table.grid { border-collapse: collapse; font-size: 11px; font-family: 'Courier New', monospace; table-layout: fixed; white-space: nowrap; }
+  table.grid thead th {
+    background: #f5f5f3; color: #888; font-size: 10px; font-weight: 600;
+    padding: 4px 5px; border: 1px solid #e8e8e8; text-align: center;
+    min-width: 30px; position: sticky; top: 0; z-index: 3;
+  }
+  table.grid thead th.corner { position: sticky; left: 0; z-index: 4; min-width: 38px; }
+  td.rn {
+    background: #f5f5f3; color: #aaa; font-size: 10px; font-weight: 600;
+    text-align: center; padding: 3px 5px; border: 1px solid #e8e8e8;
+    position: sticky; left: 0; z-index: 1; min-width: 38px;
+  }
+  td.cell { padding: 3px 6px; border: 1px solid #ececec; min-width: 30px; max-width: 130px; overflow: hidden; text-overflow: ellipsis; color: #333; }
+  td.cell.empty { color: #e0e0e0; }
+  td.cell.has-value { background: #EBF4FF; color: #1a5ca8; font-weight: 600; }
+  td.cell.is-private { background: #FFF3CD; color: #7d5a00; font-weight: 600; }
+  td.cell.expected-ok { background: #D4EDDA; color: #155724; font-weight: 700; outline: 2px solid #28a745; outline-offset: -2px; }
+  td.cell.expected-fail { background: #F8D7DA; color: #721c24; font-weight: 700; outline: 2px solid #dc3545; outline-offset: -2px; }
+
+  .stats { font-size: 12px; color: #666; margin-bottom: 10px; }
+  .stats b { color: #1a1a1a; }
+
+  #result-section { display: none; }
+  .section-gap { margin-top: 1.5rem; }
+</style>
+</head>
+<body>
+
+<h1>Zolver — Schema Mismatch Viewer</h1>
+<p class="subtitle">Elasticsearch JSON 붙여넣기 → 50×50 그리드 + 기댓값 좌표 비교 + 헤더 감지 + 메모</p>
+
+<!-- 입력 -->
+<div class="card">
+  <label>Elasticsearch Document JSON</label>
+  <textarea id="json-input" placeholder='{"_index": "zolver-schema-...", "report.sample_10x10": [...], ...}'></textarea>
+  <div class="btn-row">
+    <button class="primary" onclick="parseAndRender()">그리드 보기</button>
+    <button onclick="clearAll()">초기화</button>
+  </div>
+  <div class="error" id="err"></div>
+</div>
+
+<!-- 결과 -->
+<div id="result-section">
+  <div class="meta-bar" id="meta-bar"></div>
+
+  <!-- 헤더 감지 -->
+  <div class="header-detect" id="header-detect" style="display:none">
+    <div class="hd-title">실제 헤더 감지 결과</div>
+    <table id="header-detect-table"></table>
+  </div>
+
+  <!-- 메모 입력 -->
+  <div class="card">
+    <div class="card-title">메모 저장 <span class="memo-count" id="memo-count"></span></div>
+    <label>학과명</label>
+    <input type="text" id="memo-major" placeholder="예: 의료생명대학 바이오융합과학부 식품영양학과" style="margin-bottom:8px">
+    <label>특이사항 / 분석 메모</label>
+    <textarea class="memo-textarea" id="memo-body" placeholder="예: 인적사항 블록 3번 반복, 헤더 행 6→12행으로 밀림. 이수구분/년도 열 순서 바뀜."></textarea>
+    <div class="btn-row">
+      <button class="primary" onclick="saveMemo()">메모 저장</button>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span class="legend-item"><span class="dot" style="background:#D4EDDA;outline:2px solid #28a745;outline-offset:-2px;"></span>기댓값 좌표 일치</span>
+    <span class="legend-item"><span class="dot" style="background:#F8D7DA;outline:2px solid #dc3545;outline-offset:-2px;"></span>기댓값 좌표 불일치/누락</span>
+    <span class="legend-item"><span class="dot" style="background:#EBF4FF;"></span>값 있는 셀</span>
+    <span class="legend-item"><span class="dot" style="background:#FFF3CD;"></span>[PRIVATE] 마스킹</span>
+  </div>
+
+  <div class="stats" id="stats"></div>
+  <div class="grid-wrapper">
+    <div id="grid-container"></div>
+  </div>
+</div>
+
+<!-- 저장된 메모 목록 -->
+<div class="card section-gap" id="memo-section">
+  <div class="card-title">저장된 메모 <span class="memo-count" id="memo-list-count"></span></div>
+  <div class="memo-list" id="memo-list"></div>
+</div>
+
+<script>
+// ── constants ─────────────────────────────────────────────────────────────
+const EXPECTED_HEADERS = {
+  '년도': 2, '학기': 3, '이수구분': 5, '학수번호': 7,
+  '과목명': 12, '학점': 23, '등급': 25, '인정구분': 27, '삭제구분': 33
+}; // 기댓값: 헤더명 → 열 번호(1-based)
+
+const EXPECTED_COORDS = {
+  '2,2': '학생인적사항',
+  '6,2': '개인별전체성적조회',
+  '7,2': '년도', '7,3': '학기', '7,5': '이수구분', '7,7': '학수번호',
+  '7,12': '과목명', '7,23': '학점', '7,25': '등급', '7,27': '인정구분', '7,33': '삭제구분',
+  '3,3': '학번', '3,16': '학적상태', '3,23': '학생구분', '3,28': '학년', '3,33': '교직여부',
+  '4,3': '소속', '4,18': '기타전공',
+};
+
+const COLS = 50;
+const MEMO_KEY = 'zolver_schema_memos';
+
+// 헤더 키워드 (공백 제거 후 비교)
+const HEADER_KEYWORDS = ['년도','학기','이수구분','학수번호','과목명','학점','등급','인정구분','삭제구분'];
+
+function normalize(s) { return (s || '').replace(/\s+/g, '').toLowerCase(); }
+
+// ── 헤더 자동 감지 ────────────────────────────────────────────────────────
+// 4~21행 범위에서 "개인별전체성적조회" 찾고, 그 다음 행을 헤더로 탐색
+function detectHeaders(flat, rows) {
+  let subTitleRow = -1;
+  for (let r = 4; r <= Math.min(21, rows); r++) {
+    const val = normalize(flat[(r-1)*COLS + 1] || ''); // B열 기준
+    if (val.includes('개인별전체성적조회') || val.includes('개인별')) {
+      subTitleRow = r;
+      break;
+    }
+  }
+  if (subTitleRow === -1) return null;
+
+  const headerRow = subTitleRow + 1;
+  const detected = {}; // 헤더명 → 실제 열
+  if (headerRow > rows) return { subTitleRow, headerRow, detected };
+
+  for (let c = 1; c <= COLS; c++) {
+    const val = normalize(flat[(headerRow-1)*COLS + (c-1)] || '');
+    for (const kw of HEADER_KEYWORDS) {
+      if (val === normalize(kw)) {
+        detected[kw] = c;
+      }
+    }
+  }
+  return { subTitleRow, headerRow, detected };
+}
+
+// ── 학과명 추출 ───────────────────────────────────────────────────────────
+function extractMajor(flat, rows) {
+  // 인적사항 블록에서 소속 찾기 — "소 속" 라벨 다음 셀
+  for (let r = 1; r <= Math.min(15, rows); r++) {
+    for (let c = 1; c <= COLS; c++) {
+      const val = normalize(flat[(r-1)*COLS + (c-1)] || '');
+      if (val === '소속') {
+        // 같은 행에서 오른쪽으로 값 찾기
+        for (let cc = c+1; cc <= Math.min(c+10, COLS); cc++) {
+          const v = flat[(r-1)*COLS + (cc-1)] || '';
+          if (v && v !== '[PRIVATE]' && v.trim()) return v;
+        }
+      }
+    }
+  }
+  return null;
+}
+
+// ── 메인 렌더 ─────────────────────────────────────────────────────────────
+let currentMeta = {};
+
+function parseAndRender() {
+  const raw = document.getElementById('json-input').value.trim();
+  const errEl = document.getElementById('err');
+  errEl.style.display = 'none';
+
+  let doc;
+  try { doc = JSON.parse(raw); }
+  catch (e) { errEl.textContent = 'JSON 파싱 실패: ' + e.message; errEl.style.display = 'block'; return; }
+
+  const fields = doc.fields || doc;
+  const flat = fields['report.sample_10x10'] || fields['report.sample_50x50'] || null;
+  if (!flat || !Array.isArray(flat)) {
+    errEl.textContent = 'report.sample_10x10 필드를 찾을 수 없습니다.';
+    errEl.style.display = 'block'; return;
+  }
+
+  const total = flat.length;
+  const ROWS = Math.ceil(total / COLS);
+  const get = (key, fb='—') => { const v = fields[key]; return (v && v[0]) ? v[0] : fb; };
+
+  const formHash = get('report.form_hash');
+  const fileName = get('file_name') || get('file_name.keyword');
+  const ts = get('timestamp') || get('timestamp.keyword');
+
+  // 학과명 추출
+  const major = extractMajor(flat, ROWS);
+
+  currentMeta = { formHash, fileName, ts, major };
+
+  // 메모 입력란에 학과명 자동 채우기
+  if (major) document.getElementById('memo-major').value = major;
+
+  // 메타바
+  document.getElementById('meta-bar').innerHTML = `
+    <div class="chip">form_hash: <b>${formHash}</b></div>
+    <div class="chip">파일명: <b>${fileName}</b></div>
+    <div class="chip">시각: <b>${ts}</b></div>
+    <div class="chip">배열길이: <b>${total}</b> (${ROWS}행 × ${COLS}열)</div>
+    ${major ? `<div class="chip major-chip">소속: <b>${major}</b></div>` : ''}
+  `;
+
+  // 헤더 감지
+  const hd = detectHeaders(flat, ROWS);
+  if (hd) {
+    let hdHtml = `<tr><td>성적 제목행</td><td>${hd.subTitleRow}행</td></tr>`;
+    hdHtml += `<tr><td>헤더행</td><td>${hd.headerRow}행 (기댓값: 7행${hd.headerRow !== 7 ? ' <b style="color:#c0392b">→ 불일치!</b>' : ' ✅'})</td></tr>`;
+    for (const kw of HEADER_KEYWORDS) {
+      const actual = hd.detected[kw];
+      const expected = EXPECTED_HEADERS[kw];
+      const diff = actual !== expected;
+      hdHtml += `<tr class="${diff ? 'diff-row' : ''}">
+        <td>${kw}</td>
+        <td>실제 ${actual ? actual+'열' : '미감지'} / 기댓값 ${expected}열 ${diff ? '⚠️' : '✅'}</td>
+      </tr>`;
+    }
+    document.getElementById('header-detect-table').innerHTML = hdHtml;
+    document.getElementById('header-detect').style.display = 'block';
+  } else {
+    document.getElementById('header-detect').style.display = 'none';
+  }
+
+  // 통계
+  let nonEmpty = 0, privateCount = 0, expectedOk = 0, expectedFail = 0;
+  flat.forEach((v, idx) => {
+    const r = Math.floor(idx / COLS) + 1;
+    const c = (idx % COLS) + 1;
+    const key = `${r},${c}`;
+    if (v === '[PRIVATE]') privateCount++;
+    else if (v !== '' && v !== null && v !== undefined) nonEmpty++;
+    if (EXPECTED_COORDS[key] !== undefined) {
+      const actual = normalize(v || '');
+      const norm = normalize(EXPECTED_COORDS[key]);
+      if (actual && (actual === norm || actual.includes(norm) || norm.includes(actual))) expectedOk++;
+      else expectedFail++;
+    }
+  });
+
+  document.getElementById('stats').innerHTML =
+    `전체 <b>${total}</b>셀 &nbsp;·&nbsp; 값 있는 셀: <b>${nonEmpty}</b> &nbsp;·&nbsp; 마스킹: <b>${privateCount}</b> &nbsp;·&nbsp; 기댓값 일치: <b style="color:#155724">${expectedOk}</b> / 불일치: <b style="color:#721c24">${expectedFail}</b>`;
+
+  // 그리드
+  let html = '<table class="grid"><thead><tr><th class="corner"></th>';
+  for (let c = 1; c <= COLS; c++) html += `<th>${c}</th>`;
+  html += '</tr></thead><tbody>';
+
+  for (let r = 1; r <= ROWS; r++) {
+    html += `<tr><td class="rn">${r}</td>`;
+    for (let c = 1; c <= COLS; c++) {
+      const idx = (r-1)*COLS + (c-1);
+      const val = idx < total ? flat[idx] : '';
+      const key = `${r},${c}`;
+      const isExp = EXPECTED_COORDS[key] !== undefined;
+      const expLabel = EXPECTED_COORDS[key] || '';
+      let cls = 'cell', display = '', title = '';
+
+      if (isExp) {
+        const actual = normalize(val || '');
+        const norm = normalize(expLabel);
+        const ok = val !== '' && val !== null && (actual === norm || actual.includes(norm) || norm.includes(actual));
+        cls += ok ? ' expected-ok' : ' expected-fail';
+        display = (val !== '' && val !== null) ? String(val) : '(없음)';
+        title = `기댓값: ${expLabel} | 실제: ${val || '없음'}`;
+      } else if (val === '[PRIVATE]') {
+        cls += ' is-private'; display = '[P]'; title = '[PRIVATE]';
+      } else if (val !== '' && val !== null) {
+        cls += ' has-value';
+        const s = String(val);
+        display = s.length > 12 ? s.slice(0,12)+'…' : s;
+        title = s;
+      } else {
+        cls += ' empty';
+      }
+      html += `<td class="${cls}" title="${title.replace(/"/g,'&quot;')}">${display}</td>`;
+    }
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+
+  document.getElementById('grid-container').innerHTML = html;
+  document.getElementById('result-section').style.display = 'block';
+  document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── 메모 ─────────────────────────────────────────────────────────────────
+function loadMemos() {
+  try { return JSON.parse(localStorage.getItem(MEMO_KEY) || '[]'); }
+  catch { return []; }
+}
+function saveMemos(list) { localStorage.setItem(MEMO_KEY, JSON.stringify(list)); }
+
+function saveMemo() {
+  const major = document.getElementById('memo-major').value.trim();
+  const body = document.getElementById('memo-body').value.trim();
+  if (!body) { alert('메모 내용을 입력해주세요.'); return; }
+
+  const memos = loadMemos();
+  memos.unshift({
+    id: Date.now(),
+    major: major || '학과 미입력',
+    formHash: currentMeta.formHash || '—',
+    fileName: currentMeta.fileName || '—',
+    ts: currentMeta.ts || '—',
+    body,
+    savedAt: new Date().toLocaleString('ko-KR'),
+  });
+  saveMemos(memos);
+  document.getElementById('memo-body').value = '';
+  renderMemos();
+}
+
+function deleteMemo(id) {
+  if (!confirm('이 메모를 삭제할까요?')) return;
+  saveMemos(loadMemos().filter(m => m.id !== id));
+  renderMemos();
+}
+
+function renderMemos() {
+  const memos = loadMemos();
+  const count = memos.length;
+  document.getElementById('memo-list-count').textContent = count ? `(${count}건)` : '';
+  document.getElementById('memo-count').textContent = count ? `(${count}건)` : '';
+
+  const el = document.getElementById('memo-list');
+  if (!memos.length) {
+    el.innerHTML = '<div style="font-size:13px;color:#aaa;padding:8px 0;">저장된 메모 없음</div>';
+    return;
+  }
+  el.innerHTML = memos.map(m => `
+    <div class="memo-item">
+      <div class="memo-header">
+        <div>
+          <div class="memo-major">${m.major}</div>
+          <div class="memo-hash">form_hash: ${m.formHash} &nbsp;·&nbsp; ${m.savedAt}</div>
+        </div>
+        <span class="memo-del" onclick="deleteMemo(${m.id})">×</span>
+      </div>
+      <div class="memo-body">${m.body.replace(/</g,'&lt;')}</div>
+    </div>
+  `).join('');
+}
+
+function clearAll() {
+  document.getElementById('json-input').value = '';
+  document.getElementById('result-section').style.display = 'none';
+  document.getElementById('err').style.display = 'none';
+  document.getElementById('header-detect').style.display = 'none';
+  document.getElementById('memo-major').value = '';
+  document.getElementById('memo-body').value = '';
+  currentMeta = {};
+}
+
+// 초기 메모 렌더
+renderMemos();
+</script>
+</body>
+</html>

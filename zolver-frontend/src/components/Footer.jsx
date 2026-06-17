@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { FaGithub } from 'react-icons/fa'; // GitHub 아이콘
 import './Footer.css';
 import PolicyModal from './modals/PolicyModal';
 
@@ -53,6 +54,17 @@ export default function Footer() {
               </button>
             ))}
           </nav>
+          {/* GitHub 링크 */}
+          <a
+            className="zol-footer-github"
+            href="https://github.com/hvvrnz/zolver-service"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub 저장소"
+          >
+            <FaGithub />
+          </a>
+
           <p className="zol-footer-copy">
             © 2026 Zol.ver v1.0.0 — Confidence-based Graduation Guide
           </p>

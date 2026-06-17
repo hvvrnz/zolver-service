@@ -33,6 +33,15 @@
 }
 .zol-footer-link:hover { color: var(--color-primary); }
 
+.zol-footer-github {
+  display: flex;
+  align-items: center;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);       /* 텍스트 링크와 동일한 크기 변수로 통일 */
+  transition: color var(--transition-base);
+}
+.zol-footer-github:hover { color: var(--color-primary); }
+
 .zol-footer-copy {
   font-size: var(--text-xs);
   color: var(--color-text-disabled);
