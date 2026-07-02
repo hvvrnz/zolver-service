@@ -1,4 +1,4 @@
-import { FiBookOpen, FiExternalLink } from 'react-icons/fi';
+import { FiBookOpen, FiExternalLink, FiAlertTriangle } from 'react-icons/fi';
 import { MdFileUpload } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
@@ -27,6 +27,10 @@ export default function RecordHeader({ onUpload, uploading }) {
         <p className="record-subtitle">
           성적표는 최초 1회 업로드가 필요해요. 학과·학번은 성적표 기준으로 자동 입력돼요.
         </p>
+        <div className="record-upload-warn">
+          <FiAlertTriangle size={13}/>
+          <strong>반드시 금학기성적 조회가 아닌</strong> 전체성적 조회 후 다운로드한 파일을 올려주세요.
+        </div>
       </div>
       
       {/* 오른쪽: 버튼들 */}
